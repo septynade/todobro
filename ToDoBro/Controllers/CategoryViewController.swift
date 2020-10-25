@@ -8,8 +8,8 @@
 import UIKit
 import CoreData
 
-class CategoryViewController: UITableViewController {
-
+class CategoryViewController: SwipeTableViewController {
+    
     var categories = [Category]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -18,24 +18,24 @@ class CategoryViewController: UITableViewController {
         
         loadCategories()
     }
-
+    
     // MARK: - Table view data source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
+        
         return categories.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         cell.textLabel?.text = categories[indexPath.row].name
         
         return cell
     }
     
-    //MARK: - Model manipulation methods
+    //MARK: - Data manipulation methods
     
     func saveCategory() {
         
@@ -61,6 +61,14 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    //MARK: - Delete data by swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        
+        context.delete(categories[indexPath.row])
+        categories.remove(at: indexPath.row)
+    }
+    
     
     
     //MARK: - TableView delegate methods
@@ -79,7 +87,7 @@ class CategoryViewController: UITableViewController {
     
     
     //MARK: - Add new category methods
-
+    
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
         var textField = UITextField()
@@ -106,3 +114,4 @@ class CategoryViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
 }
+
